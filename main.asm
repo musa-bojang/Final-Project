@@ -79,7 +79,7 @@ insidebool:
 	"4. NOT Operations", 0dh, 0ah,
 	"5. TEST Operations", 0dh, 0ah,
 	"6. CMP Operations",0dh, 0ah,
-	"7. Main Menu",0dh, 0ah,0
+	"7. Chapter 6 Menu",0dh, 0ah,0
 .code
 
 	mov edx, OFFSET boolmenu
@@ -100,8 +100,7 @@ insidebool:
 	.elseif(eax == 6)
 	je insidecmp
 	.elseif(eax ==7)
-	je home
-	je insidebool
+	je chapter6
 	.endif	
 	
 	jmp insidebool
@@ -154,24 +153,31 @@ optrNOT BYTE "  (NOT Operations) Please enter a value to be Negated ", 0dh, 0ah,
 	call WriteString
 	call crlf
 	call ReadInt 
-	NOT eax 
+	
+	neg eax 
 	call WriteInt
 	jmp insidebool
 
 Testoptr:
 .data
-optrtest BYTE "  (TEST Operations) Please enter a value to be Tested ", 0dh, 0ah,0
+optrtest BYTE "  (TEST Operations) The TEST instruction works same as the AND operation, ", 0dh, 0ah,0dh, 0ah,
+"but unlike AND instruction,it does not change the first operand. So, if we need to check whether a number ", 0dh, 0ah,
+"in a register is even or odd, we can also do this using the TEST instruction without changing the original number.", 0dh, 0ah, 0
+
 .code
 	mov edx, OFFSET optrtest
 	call WriteString
 	call crlf
-	call ReadInt 
-	TEST al, 00000011b
-	jnz ValueofTest
-
+	mov al, 8h
+	TEST al, 1
+	jz ValueofTest
+	mov edx, OFFSET oddnum
+	call WriteString
+	jmp insidebool
 ValueofTest:
 .data
-testmsg BYTE "The 0s and 1 in eax match 00000011b",0dh,0ah,0
+testmsg BYTE "This is an even number",0dh,0ah,0
+oddnum BYTE "This is odd", 0dh, 0ah,0
 .code
    
 	mov edx, OFFSET testmsg
@@ -196,7 +202,7 @@ jumpmenu BYTE "The following demonstrates jumps",0dh,0ah, 0dh,0ah,
 "2. based on Equality", 0dh,0ah,
 "3. based on unsigned comparsion", 0dh,0ah,
 "4. based on signed comparison", 0dh, 0ah,
-"5. Main Menu",0dh,0ah,0
+"5. Chapter 6 Menu",0dh,0ah,0
 
 .code
 
@@ -214,7 +220,7 @@ je unsig
 cmp eax, 4
 je sig
 cmp eax, 5
-je home
+je chapter6
 
 jmp insidejumps
 
@@ -388,8 +394,10 @@ call crlf
 shiftapp:
 .data
 shiftmsg2 BYTE "This implements the application of shift instruction to do binary multiplication. ", 0dh, 0ah, 0dh, 0ah,
-	">> Please enter a number to be multiplied by 48 ",0
+	">> Please enter a number to be multiplied by 36 ",0
 .code
+mov edx, OFFSET shiftmsg2
+call WriteString
 call ReadInt
 ;mov eax, 123
 mov ebx, eax
@@ -398,6 +406,7 @@ shl eax, 2
 add eax, ebx
 call WriteBin
 call crlf
+jmp chapter7
 
 multiplication:
 .data
